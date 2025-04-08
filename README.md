@@ -44,13 +44,20 @@ This project demonstrates a complete **CI/CD pipeline** using **Jenkins**, **Ter
 │   ├── blue-deployment.yaml
 │   ├── green-deployment.yaml
 │   └── service.yaml
-└── src/
-    └── main/
-        └── java/
-            └── com/example/demoapp/
-                ├── DemoApplication.java
-                └── controller/
-                    └── HelloController.java
+├── src/
+│   ├── main/
+│   │   ├── java/com/example/demoapp/
+│   │   │   ├── controller/
+│   │   │   │   └── HelloController.java
+│   │   │   ├── service/
+│   │   │   │   └── AppInfoService.java
+│   │   │   └── DemoApplication.java
+│   │   └── resources/
+│   │       ├── application.properties
+│   │       └── static/
+│   └── test/
+│       └── java/com/example/demoapp/
+│           └── DemoApplicationTests.java
 ```
 
 ---
