@@ -1,4 +1,3 @@
-```markdown
 # 🚀 EKS CI/CD Blue-Green Deployment Project
 
 This project demonstrates a complete **CI/CD pipeline** using **Jenkins**, **Terraform**, **Docker**, **SonarQube**, **Trivy**, and **Amazon EKS**. It features a **Spring Boot** application and implements a **Blue-Green deployment** strategy to minimize downtime during releases.
@@ -140,4 +139,3 @@ This project is licensed under the [MIT License](LICENSE).
 
 Open an issue or reach out to [yourname@yourdomain.com](mailto:yourname@yourdomain.com)
 
-```
