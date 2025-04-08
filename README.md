@@ -99,6 +99,10 @@ The Jenkins pipeline will:
 7. Switch production traffic from blue to green
 8. (Optional) Remove the blue deployment
 
+> ⚙️ Ensure **Jenkins**, **Trivy**, and **SonarQube** are _installed and running_ on their respective EC2 instances.  
+> 👉 [Install Jenkins](https://mantratech.hashnode.dev/jenkins-installation-on-ubuntu)  
+> 👉 [Install SonarQube](https://mantratech.hashnode.dev/how-to-install-sonarqube-on-ubuntu)
+
 ### Jenkins Requirements
 
 - ✅ Docker installed on Jenkins agent
@@ -107,6 +111,7 @@ The Jenkins pipeline will:
 - ✅ Credentials:
   - DockerHub (`dockerhub-creds`)
   - SonarQube (`MySonarQube`)
+
 
 ---
 
