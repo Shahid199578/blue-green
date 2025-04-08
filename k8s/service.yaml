@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: demoapp-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: demoapp
+    version: green # Change this to blue if rollback
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
