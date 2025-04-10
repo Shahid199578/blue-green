@@ -68,7 +68,7 @@ pipeline {
       steps {
         sh '''
           aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_REGION
-          sed "s|shahid199578|$IMAGE|" k8s/green-deployment.yaml | kubectl apply -f -
+          sed "s|dockerimage|$$IMAGE:$VERSION|" k8s/green-deployment.yaml | kubectl apply -f -
         '''
       }
     }

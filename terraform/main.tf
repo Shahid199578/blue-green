@@ -242,35 +242,6 @@ resource "aws_instance" "jenkins" {
   tags = {
     Name = "${var.cluster_name}-jenkins"
   }
-  user_data = <<-EOF
-            #!/bin/bash
-            sudo yum update -y
-
-            # Install Java (Jenkins requirement)
-            sudo amazon-linux-extras install java-openjdk11 -y
-
-            # Add Jenkins repo and import key
-            sudo wget -O /etc/yum.repos.d/jenkins.repo \
-              https://pkg.jenkins.io/redhat-stable/jenkins.repo
-            sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
-
-            # Install Jenkins
-            sudo yum install -y jenkins git
-
-            # Start and enable Jenkins
-            sudo systemctl daemon-reexec
-            sudo systemctl start jenkins
-            sudo systemctl enable jenkins
-
-            # Install Docker
-            sudo yum install -y docker
-            sudo systemctl start docker
-            sudo systemctl enable docker
-            sudo usermod -aG docker ec2-user
-            sudo usermod -aG docker jenkins  # Set firewall rules if needed (Amazon Linux disables by default)
-            # Install Trivy
-            sudo rpm -ivh https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.51.1_Linux-64bit.rpm
-            EOF
 }
 
 # EC2 for SonarQube
@@ -284,50 +255,4 @@ resource "aws_instance" "sonarqube" {
   tags = {
     Name = "${var.cluster_name}-sonarqube"
   }
-  user_data = <<-EOF
-            #!/bin/bash
-            sudo yum update -y
-
-            # Install Java (required for SonarQube)
-            sudo amazon-linux-extras install java-openjdk11 -y
-
-            # Create SonarQube user
-            sudo useradd sonar
-            sudo mkdir /opt/sonarqube
-            sudo chown sonar:sonar /opt/sonarqube
-
-            # Download and extract SonarQube
-            cd /opt/sonarqube
-            sudo curl -O https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.9.4.87374.zip
-            sudo yum install -y unzip
-            sudo unzip sonarqube-9.9.4.87374.zip
-            sudo mv sonarqube-9.9.4.87374 sonarqube
-            sudo chown -R sonar:sonar /opt/sonarqube
-
-            # Setup SonarQube as a systemd service
-            sudo bash -c 'cat > /etc/systemd/system/sonarqube.service' << EOL
-            [Unit]
-            Description=SonarQube service
-            After=syslog.target network.target
-
-            [Service]
-            Type=simple
-            User=sonar
-            Group=sonar
-            PermissionsStartOnly=true
-            ExecStart=/opt/sonarqube/sonarqube/bin/linux-x86-64/sonar.sh start
-            ExecStop=/opt/sonarqube/sonarqube/bin/linux-x86-64/sonar.sh stop
-            Restart=always
-
-            [Install]
-            WantedBy=multi-user.target
-            EOL
-
-            # Reload and start the service
-            sudo systemctl daemon-reexec
-            sudo systemctl daemon-reload
-            sudo systemctl enable sonarqube
-            sudo systemctl start sonarqube
-            EOF
-
 }
