@@ -32,10 +32,11 @@ pipeline {
     }
 
     stage('Code Scan (SonarQube)') {
-      def mvn = tool 'Maven-Tool';
+      steps {
         withSonarQubeEnv('MySonarQube') {
           sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=blue-green"
         }
+      }
     }
 
     stage('Trivy File Scan') {
