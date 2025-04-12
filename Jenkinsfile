@@ -1,5 +1,9 @@
 pipeline {
   agent any
+  tools {
+        maven 'Maven-Tool'
+    }
+
 
   environment {
     IMAGE = "shahid199578/demoapp"
@@ -11,7 +15,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git 'https://github.com/your-repo/demoapp.git'
+        git 'https://github.com/Shahid199578/blue-green'
       }
     }
 
@@ -28,11 +32,10 @@ pipeline {
     }
 
     stage('Code Scan (SonarQube)') {
-      steps {
+      def mvn = tool 'Maven-Tool';
         withSonarQubeEnv('MySonarQube') {
-          sh 'mvn sonar:sonar'
+          sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=blue-green"
         }
-      }
     }
 
     stage('Trivy File Scan') {
