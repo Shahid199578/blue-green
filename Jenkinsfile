@@ -15,7 +15,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git 'https://github.com/your-repo/demoapp.git'
+        git 'https://github.com/Shahid199578/blue-green.git'
       }
     }
 
