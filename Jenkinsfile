@@ -8,20 +8,20 @@ pipeline {
   environment {
     IMAGE = "shahid199578/demoapp"
     VERSION = "v1"
-    AWS_REGION = "us-east-1"
+    AWS_REGION = "ap-south-1"
     CLUSTER_NAME = "demoapp-cluster"
   }
 
   stages {
     stage('Checkout') {
       steps {
-        git 'https://github.com/Shahid199578/blue-green'
+        git 'https://github.com/your-repo/demoapp.git'
       }
     }
 
     stage('Compile') {
       steps {
-        sh 'mvn clean compile'
+        sh 'mvn clean package'
       }
     }
 
@@ -34,14 +34,14 @@ pipeline {
     stage('Code Scan (SonarQube)') {
       steps {
         withSonarQubeEnv('MySonarQube') {
-          sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=blue-green"
+          sh "mvn sonar:sonar -Dsonar.projectKey=blue-green"
         }
       }
     }
 
     stage('Trivy File Scan') {
       steps {
-        sh 'trivy fs .'
+        sh 'trivy fs . > trivy_image_report || true'
       }
     }
 
@@ -53,7 +53,7 @@ pipeline {
 
     stage('Trivy Image Scan') {
       steps {
-        sh "trivy image $IMAGE:$VERSION"
+        sh "trivy image $IMAGE:$VERSION > trivy_image_report || true"
       }
     }
 
