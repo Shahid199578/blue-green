@@ -96,25 +96,7 @@ resource "aws_route_table_association" "private_assoc" {
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private.id
 }
-
-# SSH Key Pair
-resource "tls_private_key" "ssh_key" {
-  algorithm = "RSA"
-  rsa_bits  = 2048
-}
-
-
-resource "aws_key_pair" "default" {
-  key_name   = var.key_name
-  public_key = tls_private_key.ssh_key.public_key_openssh
-}
-
-resource "local_file" "private_key_pem" {
-  content  = tls_private_key.ssh_key.private_key_pem
-  filename = "${path.module}/ssh-key/${var.key_name}.pem"
-  file_permission = "0600"
-}
-
+ 
 # IAM Role for EKS Cluster
 resource "aws_iam_role" "eks_cluster_role" {
   name = "${var.cluster_name}-eks-cluster-role"
@@ -188,71 +170,4 @@ resource "aws_eks_node_group" "node_group" {
   }
   instance_types = [var.instance_type]
   depends_on = [aws_iam_role_policy_attachment.nodegroup_policies]
-}
-
-resource "aws_security_group" "public_sg" {
-  name        = "${var.cluster_name}-public-sg"
-  description = "Allow SSH and HTTP access"
-  vpc_id      = aws_vpc.main.id
-
-  ingress {
-    description = "SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.allowed_ssh_cidr] # e.g., "0.0.0.0/0" or your IP
-  }
-
-  ingress {
-    description = "SonarQube HTTP"
-    from_port   = 9000
-    to_port     = 9000
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    description = "Jenkins HTTP"
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "${var.cluster_name}-sg"
-  }
-}
-
-
-# EC2 for Jenkins
-resource "aws_instance" "jenkins" {
-  ami           = var.ami_id
-  instance_type = var.instance_type_ext
-  subnet_id     = aws_subnet.public[0].id
-  key_name      = aws_key_pair.default.key_name
-  associate_public_ip_address = true
-  vpc_security_group_ids = [aws_security_group.public_sg.id]
-  tags = {
-    Name = "${var.cluster_name}-jenkins"
-  }
-}
-
-# EC2 for SonarQube
-resource "aws_instance" "sonarqube" {
-  ami           = var.ami_id
-  instance_type = var.instance_type_ext
-  subnet_id     = aws_subnet.public[1].id
-  key_name      = aws_key_pair.default.key_name
-  associate_public_ip_address = true
-  vpc_security_group_ids      = [aws_security_group.public_sg.id]
-  tags = {
-    Name = "${var.cluster_name}-sonarqube"
-  }
 }

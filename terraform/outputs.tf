@@ -18,22 +18,3 @@ output "kubeconfig" {
   value       = "aws eks update-kubeconfig --name ${aws_eks_cluster.demo.name} --region ${var.region}"
 }
 
-output "private_key" {
-  description = "Private key for SSH access"
-  value       = tls_private_key.ssh_key.private_key_pem
-  sensitive   = true
-}
-
-output "jenkins_public_ip" {
-  value = aws_instance.jenkins.public_ip
-}
-
-output "sonarqube_public_ip" {
-  value = aws_instance.sonarqube.public_ip
-}
-
-output "ssh_private_key_pem_file" {
-  value = local_file.private_key_pem.filename
-}
-
-

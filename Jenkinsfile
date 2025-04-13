@@ -41,7 +41,7 @@ pipeline {
 
     stage('Trivy File Scan') {
       steps {
-        sh 'trivy fs . > trivy_image_report || true'
+        sh 'trivy fs . > trivy_file_report || true'
       }
     }
 
@@ -70,23 +70,15 @@ pipeline {
 
     stage('Deploy to EKS (Green)') {
       steps {
-        sh '''
+        sh """
           aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_REGION
-          sed "s|dockerimage|$$IMAGE:$VERSION|" k8s/green-deployment.yaml | kubectl apply -f -
-        '''
+          sed 's|dockerimage|${IMAGE}:${VERSION}|' k8s/green-deployment.yaml | kubectl apply -f -
+        """
       }
     }
-
     stage('Switch Traffic to Green') {
       steps {
         sh "kubectl patch svc demoapp-service -p '{\"spec\":{\"selector\":{\"app\":\"demoapp\",\"version\":\"green\"}}}'"
-      }
-    }
-
-    stage('Cleanup Blue (Optional)') {
-      steps {
-        input "Do you want to delete Blue deployment?"
-        sh "kubectl delete deployment app-blue || true"
       }
     }
   }

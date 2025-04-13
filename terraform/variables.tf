@@ -43,12 +43,12 @@ variable "desired_capacity" {
 
 variable "ami_id" {
   description = "AMI ID for EC2 instances"
-  default     = "ami-002f6e91abff6eb96" # Replace with a valid AMI ID
+  default     = "ami-0e35ddab05955cf57" # Replace with a valid AMI ID
 }
 
 variable "instance_type_ext" {
   description = "Instance type for EC2 instances"
-  default     = "t2.micro"
+  default     = "t2.medium"
 }
 
 variable "key_name" {
