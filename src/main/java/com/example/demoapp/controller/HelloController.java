@@ -4,8 +4,6 @@ import com.example.demoapp.service.AppInfoService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 @RestController
 public class HelloController {
 
@@ -16,23 +14,17 @@ public class HelloController {
     }
 
     @GetMapping("/")
-    public Map<String, String> home() {
-        return Map.of(
-            "message", "Welcome to the Blue-Green Deployment App!",
-            "status", "success"
-        );
+    public String home() {
+        return "<h1>Welcome to the Blue Deployment App!</h1>";
     }
 
     @GetMapping("/health")
-    public Map<String, String> health() {
-        return Map.of(
-            "status", "UP",
-            "message", "Application is healthy and running."
-        );
+    public String health() {
+        return "Application is healthy and running.";
     }
 
     @GetMapping("/version")
-    public Map<String, String> version() {
-        return appInfoService.getAppInfo();
+    public String version() {
+        return "Version: " + appInfoService.getAppInfo().get("version");
     }
 }
