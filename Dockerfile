@@ -1,5 +1,6 @@
 # Use an official OpenJDK runtime as a parent image
-FROM openjdk:25-slim
+FROM openjdk:25-jdk
+
 
 # Set the working directory
 WORKDIR /app
